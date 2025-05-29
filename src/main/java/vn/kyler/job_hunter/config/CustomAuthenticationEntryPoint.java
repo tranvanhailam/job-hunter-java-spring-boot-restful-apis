@@ -1,9 +1,9 @@
 package vn.kyler.job_hunter.config;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -34,7 +34,12 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         this.delegate.commence(request, response, authException);
         response.setContentType("application/json;charset=UTF-8");
         RestResponse<Object> restResponse = new RestResponse<>();
-        restResponse.setStatusCode(HttpStatus.UNAUTHORIZED.value());
+
+        if(authException instanceof InsufficientAuthenticationException) {
+            restResponse.setStatusCode(HttpStatus.UNAUTHORIZED.value());
+        } else {
+            restResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        }
 
         // String errorMessage =
         // Optional.ofNullable(authException.getCause()).map(Throwable::getMessage)
@@ -43,6 +48,8 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
         restResponse.setError(authException.getMessage());
         restResponse.setMessage("Token is invalid or expired");
+
+        // ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(restResponse);
         mapper.writeValue(response.getWriter(), restResponse);
     }
 

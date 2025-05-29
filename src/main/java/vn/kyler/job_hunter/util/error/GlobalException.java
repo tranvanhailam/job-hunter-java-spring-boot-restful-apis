@@ -20,14 +20,14 @@ import vn.kyler.job_hunter.service.IdInvalidException;
 @RestControllerAdvice
 public class GlobalException {
 
-    @ExceptionHandler(value = IdInvalidException.class)
-    public ResponseEntity<RestResponse<Object>> handleIdInvalidException(IdInvalidException e) {
-        RestResponse<Object> restResponse = new RestResponse<>();
-        restResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        restResponse.setMessage(e.getMessage());
-        restResponse.setError("IdInvalidException");
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(restResponse);
-    }
+    // @ExceptionHandler(value = IdInvalidException.class)
+    // public ResponseEntity<RestResponse<Object>> handleIdInvalidException(IdInvalidException e) {
+    //     RestResponse<Object> restResponse = new RestResponse<>();
+    //     restResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
+    //     restResponse.setMessage(e.getMessage());
+    //     restResponse.setError("IdInvalidException");
+    //     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(restResponse);
+    // }
 
     @ExceptionHandler({ UsernameNotFoundException.class,
             BadCredentialsException.class })
