@@ -6,10 +6,11 @@ import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 import vn.kyler.job_hunter.domain.Company;
+import vn.kyler.job_hunter.domain.response.RestResponse;
 import vn.kyler.job_hunter.domain.response.ResultPaginationDTO;
 import vn.kyler.job_hunter.service.CompanyService;
+import vn.kyler.job_hunter.service.exception.NotFoundException;
 import vn.kyler.job_hunter.util.annotation.ApiMessage;
-
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -47,20 +48,23 @@ public class CompanyController {
     }
 
     @GetMapping("/companies/{id}")
-    public ResponseEntity<Company> getCompany(@PathVariable("id") long id) {
+    public ResponseEntity<Company> getCompany(@PathVariable("id") long id) throws NotFoundException {
         Company company = this.companyService.handleGetCompanyById(id);
         return ResponseEntity.status(HttpStatus.OK).body(company);
     }
 
     @PutMapping("/companies")
-    public ResponseEntity<Company> updateCompany(@Valid @RequestBody Company company) {
+    public ResponseEntity<Company> updateCompany(@Valid @RequestBody Company company) throws NotFoundException {
         Company companyUpdated = this.companyService.handleUpdateCompany(company);
         return ResponseEntity.status(HttpStatus.OK).body(companyUpdated);
     }
 
     @DeleteMapping("/companies/{id}")
-    public ResponseEntity<String> deleteCompany(@PathVariable("id") long id) {
+    public ResponseEntity<?> deleteCompany(@PathVariable("id") long id) throws NotFoundException {
         this.companyService.handleDeleteCompany(id);
-        return ResponseEntity.status(HttpStatus.OK).body("Delete company successfully!");
+        RestResponse<String> restResponse = new RestResponse<>();
+        restResponse.setStatusCode(HttpStatus.OK.value());
+        restResponse.setMessage("Delete company successfully!");
+        return ResponseEntity.status(HttpStatus.OK).body(restResponse);
     }
 }

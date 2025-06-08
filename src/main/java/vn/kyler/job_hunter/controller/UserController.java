@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<?> createUser(@Valid @RequestBody User user) throws EmailExistsException {
+    public ResponseEntity<ResUserDTO> createUser(@Valid @RequestBody User user) throws EmailExistsException {
         String hashPassword = this.passwordEncoder.encode(user.getPassword());
         user.setPassword(hashPassword);
         User userCreated = this.userService.handleCreateUser(user);
@@ -61,7 +61,7 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<?> getUser(@PathVariable("id") long id) throws NotFoundException {
+    public ResponseEntity<ResUserDTO> getUser(@PathVariable("id") long id) throws NotFoundException {
         User user = this.userService.handleGetUser(id);
         return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleConvertToUserDTO(user));
     }
@@ -76,7 +76,7 @@ public class UserController {
     }
 
     @PutMapping("/users")
-    public ResponseEntity<?> updateUser(@RequestBody User user) throws NotFoundException {
+    public ResponseEntity<ResUserDTO> updateUser(@RequestBody User user) throws NotFoundException {
         User userUpdated = this.userService.handleUpdateUser(user);
         return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleConvertToUserDTO(userUpdated));
     }

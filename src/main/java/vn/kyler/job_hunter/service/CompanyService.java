@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import vn.kyler.job_hunter.domain.Company;
 import vn.kyler.job_hunter.domain.response.ResultPaginationDTO;
 import vn.kyler.job_hunter.repository.CompanyRepository;
+import vn.kyler.job_hunter.service.exception.NotFoundException;
 
 @Service
 public class CompanyService {
@@ -43,12 +44,15 @@ public class CompanyService {
         return resultPaginationDTO;
     }
 
-    public Company handleGetCompanyById(long id) {
+    public Company handleGetCompanyById(long id) throws NotFoundException {
         Optional<Company> company = this.companyRepository.findById(id);
-        return this.companyRepository.findById(id).isPresent() ? company.get() : null;
+        if (!company.isPresent()) {
+            throw new NotFoundException("Company with id " + id + " not found");
+        }
+        return company.get();
     }
 
-    public Company handleUpdateCompany(Company company) {
+    public Company handleUpdateCompany(Company company) throws NotFoundException {
         Optional<Company> companyOptional = this.companyRepository.findById(company.getId());
         if (companyOptional.isPresent()) {
             Company companyToUpdate = companyOptional.get();
@@ -58,11 +62,14 @@ public class CompanyService {
             companyToUpdate.setLogo(company.getLogo());
             return this.companyRepository.save(companyToUpdate);
         } else {
-            return null;
+            throw new NotFoundException("Company with id " + company.getId() + " not found");
         }
     }
 
-    public void handleDeleteCompany(long id) {
+    public void handleDeleteCompany(long id) throws NotFoundException {
+        if (!this.companyRepository.existsById(id)) {
+            throw new NotFoundException("Company with id " + id + " not found");
+        }
         this.companyRepository.deleteById(id);
     }
 }
