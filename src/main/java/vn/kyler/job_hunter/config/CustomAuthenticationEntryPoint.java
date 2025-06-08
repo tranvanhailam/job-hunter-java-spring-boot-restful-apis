@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import vn.kyler.job_hunter.domain.RestResponse;
+import vn.kyler.job_hunter.domain.response.RestResponse;
 
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
@@ -37,8 +37,10 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
         if(authException instanceof InsufficientAuthenticationException) {
             restResponse.setStatusCode(HttpStatus.UNAUTHORIZED.value());
+            restResponse.setMessage("Token is invalid or expired");
         } else {
             restResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
+            restResponse.setMessage("Authentication failed");
         }
 
         // String errorMessage =
@@ -47,7 +49,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         // restResponse.setError(errorMessage);
 
         restResponse.setError(authException.getMessage());
-        restResponse.setMessage("Token is invalid or expired");
 
         // ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(restResponse);
         mapper.writeValue(response.getWriter(), restResponse);

@@ -11,23 +11,66 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import vn.kyler.job_hunter.domain.RestResponse;
-import vn.kyler.job_hunter.service.IdInvalidException;
+import vn.kyler.job_hunter.domain.response.RestResponse;
+import vn.kyler.job_hunter.service.exception.EmailExistsException;
+import vn.kyler.job_hunter.service.exception.IdInvalidException;
+import vn.kyler.job_hunter.service.exception.NoRefreshTokenInCookieException;
+import vn.kyler.job_hunter.service.exception.NotFoundException;
 
 @RestControllerAdvice
 public class GlobalException {
 
-    // @ExceptionHandler(value = IdInvalidException.class)
-    // public ResponseEntity<RestResponse<Object>> handleIdInvalidException(IdInvalidException e) {
-    //     RestResponse<Object> restResponse = new RestResponse<>();
-    //     restResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
-    //     restResponse.setMessage(e.getMessage());
-    //     restResponse.setError("IdInvalidException");
-    //     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(restResponse);
-    // }
+    @ExceptionHandler(value = NoRefreshTokenInCookieException.class)
+    public ResponseEntity<RestResponse<Object>> handleNoRefreshTokenInCookieException(
+            NoRefreshTokenInCookieException e) {
+        RestResponse<Object> restResponse = new RestResponse<>();
+        restResponse.setStatusCode(HttpStatus.UNAUTHORIZED.value());
+        restResponse.setMessage(e.getMessage());
+        restResponse.setError("NoRefreshTokenInCookieException");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(restResponse);
+    }
+    
+    @ExceptionHandler(value = MissingRequestCookieException.class)
+    public ResponseEntity<RestResponse<Object>> handleMissingRequestCookieException(
+        MissingRequestCookieException e) {
+        RestResponse<Object> restResponse = new RestResponse<>();
+        restResponse.setStatusCode(HttpStatus.UNAUTHORIZED.value());
+        restResponse.setMessage(e.getMessage());
+        restResponse.setError("MissingRequestCookieException");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(restResponse);
+    }
+
+    @ExceptionHandler(value = NotFoundException.class)
+    public ResponseEntity<RestResponse<Object>> handleNotFoundException(NotFoundException e) {
+        RestResponse<Object> restResponse = new RestResponse<>();
+        restResponse.setStatusCode(HttpStatus.NOT_FOUND.value());
+        restResponse.setMessage(e.getMessage());
+        restResponse.setError("NotFoundException");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(restResponse);
+    }
+
+    @ExceptionHandler(value = EmailExistsException.class)
+    public ResponseEntity<RestResponse<Object>> handleEmailExistsException(EmailExistsException e) {
+        RestResponse<Object> restResponse = new RestResponse<>();
+        restResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        restResponse.setMessage(e.getMessage());
+        restResponse.setError("EmailExistsException");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(restResponse);
+    }
+
+    @ExceptionHandler(value = NoResourceFoundException.class)
+    public ResponseEntity<RestResponse<Object>> handleNotFoundException(NoResourceFoundException e) {
+        RestResponse<Object> restResponse = new RestResponse<>();
+        restResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        restResponse.setMessage(e.getMessage());
+        restResponse.setError("NoResourceFoundException");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(restResponse);
+    }
 
     @ExceptionHandler({ UsernameNotFoundException.class,
             BadCredentialsException.class })
@@ -53,5 +96,4 @@ public class GlobalException {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(restResponse);
     }
-
 }

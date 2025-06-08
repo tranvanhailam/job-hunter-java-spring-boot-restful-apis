@@ -1,6 +1,5 @@
-package vn.kyler.job_hunter.service;
+package vn.kyler.job_hunter.config;
 
-import java.util.Collection;
 import java.util.Collections;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -10,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import vn.kyler.job_hunter.domain.User;
+import vn.kyler.job_hunter.service.UserService;
 
 @Component("userDetailsService")
 public class CustomUserDetailsService implements UserDetailsService {

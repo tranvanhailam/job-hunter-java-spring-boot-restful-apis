@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import vn.kyler.job_hunter.service.IdInvalidException;
+import vn.kyler.job_hunter.service.exception.IdInvalidException;
 
 @RestController
 public class HelloController {

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import jakarta.servlet.http.HttpServletResponse;
-import vn.kyler.job_hunter.domain.RestResponse;
+import vn.kyler.job_hunter.domain.response.RestResponse;
 import vn.kyler.job_hunter.util.annotation.ApiMessage;
 
 @RestControllerAdvice
@@ -28,20 +28,18 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
         HttpServletResponse httpServletResponse = ((ServletServerHttpResponse) response).getServletResponse();
         int statusCode = httpServletResponse.getStatus();
 
-        RestResponse<Object> restResponse = new RestResponse<>();
-        restResponse.setStatusCode(statusCode);
-
-        if (body instanceof String) {
-            return body;
-        }
-
         if (statusCode >= 400) {
             return body;
         } else {
+            if (body instanceof RestResponse || body instanceof String) {
+                return body;
+            }
+            RestResponse<Object> restResponse = new RestResponse<>();
+            restResponse.setStatusCode(statusCode);
             restResponse.setData(body);
             ApiMessage apiMessage = returnType.getMethodAnnotation(ApiMessage.class);
             restResponse.setMessage(apiMessage != null ? apiMessage.value() : "Call API success");
+            return restResponse;
         }
-        return restResponse;
     }
 }

@@ -10,7 +10,11 @@ import vn.kyler.job_hunter.domain.Company;
 import vn.kyler.job_hunter.domain.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long>,JpaSpecificationExecutor<User> {
+public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
     Optional<User> findById(long id);
-    Optional<User> findByEmail(String email); 
+
+    Optional<User> findByEmail(String email);
+
+    boolean existsByEmail(String email);
+    Optional<User> findByRefreshTokenAndEmail(String refreshToken, String email);
 }

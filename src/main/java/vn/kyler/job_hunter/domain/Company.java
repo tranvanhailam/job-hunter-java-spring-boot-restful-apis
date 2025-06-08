@@ -13,7 +13,9 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.kyler.job_hunter.util.SecurityUtil;
 
@@ -21,6 +23,8 @@ import vn.kyler.job_hunter.util.SecurityUtil;
 @Table(name = "companies")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Company {
 
     @Id
@@ -37,7 +41,7 @@ public class Company {
 
     private String logo;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
+    // @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
     private Instant createdAt;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
@@ -46,22 +50,6 @@ public class Company {
     private String createdBy;
 
     private String updatedBy;
-
-    public Company() {
-    }
-
-    public Company(long id, String name, String description, String address, String logo, Instant createdAt,
-            Instant updatedAt, String createdBy, String updatedBy) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.address = address;
-        this.logo = logo;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.createdBy = createdBy;
-        this.updatedBy = updatedBy;
-    }
 
     @PrePersist
     public void handleBeforeCreate() {
