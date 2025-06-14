@@ -1,6 +1,7 @@
 package vn.kyler.job_hunter.util;
 
 import org.springframework.core.MethodParameter;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -24,14 +25,14 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
     @Override
     @Nullable
     public Object beforeBodyWrite(@Nullable Object body, MethodParameter returnType, MediaType selectedContentType,
-            Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+                                  Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         HttpServletResponse httpServletResponse = ((ServletServerHttpResponse) response).getServletResponse();
         int statusCode = httpServletResponse.getStatus();
 
         if (statusCode >= 400) {
             return body;
         } else {
-            if (body instanceof RestResponse || body instanceof String) {
+            if (body instanceof RestResponse || body instanceof String || body instanceof Resource) {
                 return body;
             }
             RestResponse<Object> restResponse = new RestResponse<>();

@@ -1,5 +1,6 @@
 package vn.kyler.job_hunter.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     boolean existsByEmail(String email);
     Optional<User> findByRefreshTokenAndEmail(String refreshToken, String email);
+
+    Optional<User> findByCompany(Company company);
+    List<User> findAllByCompany(Company company);
+    List<User> findAllByCompany_Id(long companyId);
 }

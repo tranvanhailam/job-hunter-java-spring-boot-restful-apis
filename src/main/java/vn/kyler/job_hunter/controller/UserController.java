@@ -1,11 +1,8 @@
 package vn.kyler.job_hunter.controller;
 
-import java.util.List;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,14 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
-import vn.kyler.job_hunter.domain.Company;
 import vn.kyler.job_hunter.domain.User;
 import vn.kyler.job_hunter.domain.response.ResUserDTO;
 import vn.kyler.job_hunter.domain.response.RestResponse;
 import vn.kyler.job_hunter.domain.response.ResultPaginationDTO;
 import vn.kyler.job_hunter.service.UserService;
-import vn.kyler.job_hunter.service.exception.EmailExistsException;
-import vn.kyler.job_hunter.service.exception.IdInvalidException;
+import vn.kyler.job_hunter.service.exception.ExistsException;
 import vn.kyler.job_hunter.service.exception.NotFoundException;
 import vn.kyler.job_hunter.util.annotation.ApiMessage;
 
@@ -43,11 +38,10 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<ResUserDTO> createUser(@Valid @RequestBody User user) throws EmailExistsException {
+    public ResponseEntity<ResUserDTO> createUser(@Valid @RequestBody User user) throws ExistsException, NotFoundException {
         String hashPassword = this.passwordEncoder.encode(user.getPassword());
         user.setPassword(hashPassword);
         User userCreated = this.userService.handleCreateUser(user);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.handleConvertToUserDTO(userCreated));
     }
 
@@ -68,7 +62,7 @@ public class UserController {
 
     @GetMapping("/users")
     @ApiMessage("Fetch all users")
-    public ResponseEntity<ResultPaginationDTO> getAllUser(
+    public ResponseEntity<ResultPaginationDTO> getAllUsers(
             Pageable pageable,
             @Filter Specification<User> specification) {
         ResultPaginationDTO resultPaginationDTO = this.userService.handleGetAllUser(specification, pageable);
@@ -76,7 +70,7 @@ public class UserController {
     }
 
     @PutMapping("/users")
-    public ResponseEntity<ResUserDTO> updateUser(@RequestBody User user) throws NotFoundException {
+    public ResponseEntity<ResUserDTO> updateUser(@Valid @RequestBody User user) throws NotFoundException {
         User userUpdated = this.userService.handleUpdateUser(user);
         return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleConvertToUserDTO(userUpdated));
     }

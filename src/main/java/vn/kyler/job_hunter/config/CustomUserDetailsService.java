@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import vn.kyler.job_hunter.domain.User;
 import vn.kyler.job_hunter.service.UserService;
 
-@Component("userDetailsService")
+@Component("UserDetailsService")
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserService userService;

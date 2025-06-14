@@ -1,8 +1,6 @@
 package vn.kyler.job_hunter.util.error;
 
-import java.lang.reflect.Member;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +15,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import vn.kyler.job_hunter.domain.response.RestResponse;
-import vn.kyler.job_hunter.service.exception.EmailExistsException;
-import vn.kyler.job_hunter.service.exception.IdInvalidException;
+import vn.kyler.job_hunter.service.exception.ExistsException;
+import vn.kyler.job_hunter.service.exception.StorageException;
 import vn.kyler.job_hunter.service.exception.NoRefreshTokenInCookieException;
 import vn.kyler.job_hunter.service.exception.NotFoundException;
 
@@ -34,10 +32,10 @@ public class GlobalException {
         restResponse.setError("NoRefreshTokenInCookieException");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(restResponse);
     }
-    
+
     @ExceptionHandler(value = MissingRequestCookieException.class)
     public ResponseEntity<RestResponse<Object>> handleMissingRequestCookieException(
-        MissingRequestCookieException e) {
+            MissingRequestCookieException e) {
         RestResponse<Object> restResponse = new RestResponse<>();
         restResponse.setStatusCode(HttpStatus.UNAUTHORIZED.value());
         restResponse.setMessage(e.getMessage());
@@ -54,8 +52,8 @@ public class GlobalException {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(restResponse);
     }
 
-    @ExceptionHandler(value = EmailExistsException.class)
-    public ResponseEntity<RestResponse<Object>> handleEmailExistsException(EmailExistsException e) {
+    @ExceptionHandler(value = ExistsException.class)
+    public ResponseEntity<RestResponse<Object>> handleEmailExistsException(ExistsException e) {
         RestResponse<Object> restResponse = new RestResponse<>();
         restResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
         restResponse.setMessage(e.getMessage());
@@ -72,8 +70,8 @@ public class GlobalException {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(restResponse);
     }
 
-    @ExceptionHandler({ UsernameNotFoundException.class,
-            BadCredentialsException.class })
+    @ExceptionHandler({UsernameNotFoundException.class,
+            BadCredentialsException.class})
     public ResponseEntity<RestResponse<Object>> handleUsernameNotFoundException(Exception e) {
         RestResponse<Object> restResponse = new RestResponse<>();
         restResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
@@ -90,10 +88,19 @@ public class GlobalException {
         RestResponse<Object> restResponse = new RestResponse<>();
         restResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
         restResponse.setError("MethodArgumentNotValidException");
-
         List<String> errorMessages = fieldErrors.stream().map(fieldError -> fieldError.getDefaultMessage()).toList();
         restResponse.setMessage(errorMessages.size() > 1 ? errorMessages : errorMessages.get(0));
-
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(restResponse);
+    }
+
+    @ExceptionHandler(value = StorageException.class)
+    public ResponseEntity<RestResponse<Object>> handleFileUploadException(
+            StorageException e) {
+        RestResponse<Object> restResponse = new RestResponse<>();
+        restResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        restResponse.setMessage(e.getMessage());
+        restResponse.setError("FileUploadException");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(restResponse);
+
     }
 }

@@ -9,16 +9,20 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import vn.kyler.job_hunter.domain.Company;
+import vn.kyler.job_hunter.domain.User;
 import vn.kyler.job_hunter.domain.response.ResultPaginationDTO;
 import vn.kyler.job_hunter.repository.CompanyRepository;
+import vn.kyler.job_hunter.repository.UserRepository;
 import vn.kyler.job_hunter.service.exception.NotFoundException;
 
 @Service
 public class CompanyService {
     private final CompanyRepository companyRepository;
+    private final UserRepository userRepository;
 
-    public CompanyService(CompanyRepository companyRepository) {
+    public CompanyService(CompanyRepository companyRepository, UserRepository userRepository) {
         this.companyRepository = companyRepository;
+        this.userRepository = userRepository;
     }
 
     public Company handleCreateCompany(Company company) {
@@ -70,6 +74,11 @@ public class CompanyService {
         if (!this.companyRepository.existsById(id)) {
             throw new NotFoundException("Company with id " + id + " not found");
         }
+        List<User> users = this.userRepository.findAllByCompany_Id(id);
+        for (User user : users) {
+            user.setCompany(null);
+        }
+        this.userRepository.saveAll(users);
         this.companyRepository.deleteById(id);
     }
 }

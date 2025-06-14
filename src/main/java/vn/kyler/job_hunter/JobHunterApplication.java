@@ -2,22 +2,19 @@ package vn.kyler.job_hunter;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+//import org.springframework.context.ApplicationContext;
 
-//disable security
-// @SpringBootApplication(exclude = {
-// 		org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class,
-// 		org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration.class
-// })
 @SpringBootApplication
+//@ComponentScan(basePackages = "vn.kyler.job_hunter")
 public class JobHunterApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(JobHunterApplication.class, args);
-		ApplicationContext abc = SpringApplication.run(JobHunterApplication.class, args);
-		for (String s : abc.getBeanDefinitionNames()) {
-			System.out.println(s + "------------");
-		}
+//		ApplicationContext abc = SpringApplication.run(JobHunterApplication.class, args);
+//		for (String s : abc.getBeanDefinitionNames()) {
+//			System.out.println(s + "------------");
+//		}
 	}
 
 }

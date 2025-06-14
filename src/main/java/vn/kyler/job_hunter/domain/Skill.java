@@ -1,36 +1,29 @@
 package vn.kyler.job_hunter.domain;
 
-import java.time.Instant;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.kyler.job_hunter.util.SecurityUtil;
 
+import java.time.Instant;
+import java.util.List;
+
 @Entity
-@Table(name = "companies")
+@Table(name = "skills")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Company {
-
+public class Skill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @NotBlank(message = "Name is required")
+    @Column(unique = true, nullable = false)
     private String name;
-    @Column(columnDefinition = "MEDIUMTEXT")
-    private String description;
-    private String address;
-    private String logo;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
     private Instant createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
@@ -38,13 +31,9 @@ public class Company {
     private String createdBy;
     private String updatedBy;
 
-    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "skills", fetch = FetchType.LAZY)
     @JsonIgnore
-    List<User> users;
-
-    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    List<Job> jobs;
+    private List<Job> jobs;
 
     @PrePersist
     public void handleBeforeCreate() {
