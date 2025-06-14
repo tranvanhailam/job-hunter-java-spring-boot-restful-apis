@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import vn.kyler.job_hunter.domain.Company;
 import vn.kyler.job_hunter.domain.User;
 import vn.kyler.job_hunter.domain.response.ResUserDTO;
 import vn.kyler.job_hunter.domain.response.ResultPaginationDTO;
@@ -20,15 +22,22 @@ import vn.kyler.job_hunter.service.exception.NotFoundException;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final CompanyService companyService;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, CompanyService companyService) {
         this.userRepository = userRepository;
+        this.companyService = companyService;
     }
 
-    public User handleCreateUser(User user) throws EmailExistsException {
+    public User handleCreateUser(User user) throws EmailExistsException, NotFoundException {
         boolean existsEmail = this.userRepository.existsByEmail(user.getEmail());
         if (existsEmail) {
             throw new EmailExistsException("Email " + user.getEmail() + " already exists");
+        }
+
+        if (user.getCompany() != null) {
+            Company company = this.companyService.handleGetCompanyById(user.getCompany().getId());
+            user.setCompany(company);
         }
         return this.userRepository.save(user);
     }
@@ -72,6 +81,14 @@ public class UserService {
                     userDTO.setUpdatedAt(user.getUpdatedAt());
                     userDTO.setCreatedBy(user.getCreatedBy());
                     userDTO.setUpdatedBy(user.getUpdatedBy());
+
+                    if (user.getCompany() != null) {
+                        ResUserDTO.Company company = new ResUserDTO.Company();
+                        company.setId(user.getCompany().getId());
+                        company.setName(user.getCompany().getName());
+                        userDTO.setCompany(company);
+                    }
+
                     return userDTO;
                 })
                 .collect(Collectors.toList());
@@ -98,6 +115,14 @@ public class UserService {
             userToUpdate.setGender(user.getGender());
             userToUpdate.setAddress(user.getAddress());
 
+
+            if (user.getCompany() != null) {
+                Company company = this.companyService.handleGetCompanyById(user.getCompany().getId());
+                user.setCompany(company);
+                userToUpdate.setCompany(company);
+            }
+
+
             return this.userRepository.save(userToUpdate);
         } else {
             throw new NotFoundException("User with id " + user.getId() + " not found");
@@ -116,6 +141,15 @@ public class UserService {
         userDTO.setUpdatedAt(user.getUpdatedAt());
         userDTO.setCreatedBy(user.getCreatedBy());
         userDTO.setUpdatedBy(user.getUpdatedBy());
+
+        if (user.getCompany() != null) {
+            ResUserDTO.Company company = new ResUserDTO.Company();
+            company.setId(user.getCompany().getId());
+            company.setName(user.getCompany().getName());
+            userDTO.setCompany(company);
+        }
+
+
         return userDTO;
     }
 

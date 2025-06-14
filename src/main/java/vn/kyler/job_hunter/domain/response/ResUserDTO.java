@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import vn.kyler.job_hunter.domain.Company;
 import vn.kyler.job_hunter.util.constant.GenderEnum;
 
 @Getter
@@ -33,4 +34,13 @@ public class ResUserDTO {
     private String createdBy;
 
     private String updatedBy;
+
+    private Company company;
+
+    @Getter
+    @Setter
+    public static class Company {
+        private long id;
+        private String name;
+    }
 }

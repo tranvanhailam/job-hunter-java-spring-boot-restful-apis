@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<ResUserDTO> createUser(@Valid @RequestBody User user) throws EmailExistsException {
+    public ResponseEntity<ResUserDTO> createUser(@Valid @RequestBody User user) throws EmailExistsException, NotFoundException {
         String hashPassword = this.passwordEncoder.encode(user.getPassword());
         user.setPassword(hashPassword);
         User userCreated = this.userService.handleCreateUser(user);
