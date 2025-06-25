@@ -1,5 +1,10 @@
 package vn.kyler.job_hunter.controller;
 
+import io.github.bucket4j.Bandwidth;
+import io.github.bucket4j.Bucket;
+import io.github.bucket4j.Bucket4j;
+import io.github.bucket4j.Refill;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.turkraft.springfilter.boot.Filter;
@@ -24,12 +29,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import org.springframework.web.bind.annotation.PutMapping;
 
+import java.time.Duration;
+
 @RestController
 public class CompanyController {
     private final CompanyService companyService;
+    private final Bucket bucket;
 
     public CompanyController(CompanyService companyService) {
         this.companyService = companyService;
+        Refill refill = Refill.intervally(60, Duration.ofMinutes(1));
+        Bandwidth limit = Bandwidth.classic(60, refill);
+        Bucket bucket = Bucket.builder().addLimit(limit).build();
+        this.bucket = bucket;
     }
 
     @PostMapping("/companies")
@@ -43,8 +55,12 @@ public class CompanyController {
     public ResponseEntity<ResultPaginationDTO> getAllCompanies(
             Pageable pageable,
             @Filter Specification<Company> specification) {
-        ResultPaginationDTO resultPaginationDTO = this.companyService.handleGetAllCompanies(specification, pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(resultPaginationDTO);
+        if (this.bucket.tryConsume(1)) {
+            ResultPaginationDTO resultPaginationDTO = this.companyService.handleGetAllCompanies(specification, pageable);
+            return ResponseEntity.status(HttpStatus.OK).body(resultPaginationDTO);
+        } else {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(null);
+        }
     }
 
     @GetMapping("/companies/{id}")

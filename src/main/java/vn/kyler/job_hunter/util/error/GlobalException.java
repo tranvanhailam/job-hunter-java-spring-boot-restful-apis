@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import vn.kyler.job_hunter.domain.response.RestResponse;
-import vn.kyler.job_hunter.service.exception.ExistsException;
-import vn.kyler.job_hunter.service.exception.StorageException;
-import vn.kyler.job_hunter.service.exception.NoRefreshTokenInCookieException;
-import vn.kyler.job_hunter.service.exception.NotFoundException;
+import vn.kyler.job_hunter.service.exception.*;
 
 @RestControllerAdvice
 public class GlobalException {
@@ -101,6 +98,17 @@ public class GlobalException {
         restResponse.setMessage(e.getMessage());
         restResponse.setError("FileUploadException");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(restResponse);
+
+    }
+
+    @ExceptionHandler(value = TooManyReqException.class)
+    public ResponseEntity<RestResponse<Object>> handleTooManyReqException(
+            TooManyReqException e) {
+        RestResponse<Object> restResponse = new RestResponse<>();
+        restResponse.setStatusCode(HttpStatus.TOO_MANY_REQUESTS.value());
+        restResponse.setMessage(e.getMessage());
+        restResponse.setError("TooManyReqException");
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(restResponse);
 
     }
 }
