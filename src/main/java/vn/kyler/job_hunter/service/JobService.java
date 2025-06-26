@@ -35,12 +35,6 @@ public class JobService {
             job.setCompany(company);
         }
         if (job.getSkills() != null) {
-//            List<Skill> skills = new ArrayList<Skill>();
-//            for (Skill skill : job.getSkills()) {
-//                Skill skillInDB= this.skillService.handleGetSkillById(skill.getId());
-//                skills.add(skillInDB);
-//            }
-//            job.setSkills(skills);
             job.setSkills(
                     job.getSkills().stream()
                             .map(skill -> {
