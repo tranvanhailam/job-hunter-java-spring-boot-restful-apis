@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import vn.kyler.job_hunter.domain.Company;
+import vn.kyler.job_hunter.domain.Role;
 import vn.kyler.job_hunter.domain.User;
 import vn.kyler.job_hunter.domain.response.ResUserDTO;
 import vn.kyler.job_hunter.domain.response.ResultPaginationDTO;
@@ -22,10 +23,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final CompanyService companyService;
+    private final RoleService roleService;
 
-    public UserService(UserRepository userRepository, CompanyService companyService) {
+    public UserService(UserRepository userRepository, CompanyService companyService, RoleService roleService) {
         this.userRepository = userRepository;
         this.companyService = companyService;
+        this.roleService = roleService;
     }
 
     public User handleCreateUser(User user) throws ExistsException, NotFoundException {
@@ -35,8 +38,13 @@ public class UserService {
         }
 
         if (user.getCompany() != null) {
-            Company company = this.companyService.handleGetCompanyById(user.getCompany().getId());
+            Company company = this.companyService.handleGetCompany(user.getCompany().getId());
             user.setCompany(company);
+        }
+
+        if (user.getRole() != null) {
+            Role role = this.roleService.handleGetRole(user.getRole().getId());
+            user.setRole(role);
         }
         return this.userRepository.save(user);
     }
@@ -61,9 +69,6 @@ public class UserService {
         return user.isPresent() ? user.get() : null;
     }
 
-    public List<User> handleGetAllUser() {
-        return this.userRepository.findAll();
-    }
 
     public ResultPaginationDTO handleGetAllUser(Specification<User> specification, Pageable pageable) {
         Page<User> userPage = this.userRepository.findAll(specification, pageable);
@@ -86,6 +91,13 @@ public class UserService {
                         company.setId(user.getCompany().getId());
                         company.setName(user.getCompany().getName());
                         userDTO.setCompany(company);
+                    }
+
+                    if (user.getRole() != null) {
+                        ResUserDTO.Role role = new ResUserDTO.Role();
+                        role.setId(user.getRole().getId());
+                        role.setName(user.getRole().getName());
+                        userDTO.setRole(role);
                     }
 
                     return userDTO;
@@ -117,10 +129,14 @@ public class UserService {
         userToUpdate.setAddress(user.getAddress());
 
         if (user.getCompany() != null) {
-            Company company = this.companyService.handleGetCompanyById(user.getCompany().getId());
-            user.setCompany(company);
+            Company company = this.companyService.handleGetCompany(user.getCompany().getId());
             userToUpdate.setCompany(company);
-        }else userToUpdate.setCompany(null);
+        } else userToUpdate.setCompany(null);
+
+        if (user.getRole() != null) {
+            Role role = this.roleService.handleGetRole(user.getRole().getId());
+            userToUpdate.setRole(role);
+        }else  userToUpdate.setRole(null);
         return this.userRepository.save(userToUpdate);
     }
 
@@ -143,6 +159,13 @@ public class UserService {
             company.setName(user.getCompany().getName());
             userDTO.setCompany(company);
         }
+
+        if (user.getRole() != null) {
+            ResUserDTO.Role role = new ResUserDTO.Role();
+            role.setId(user.getRole().getId());
+            role.setName(user.getRole().getName());
+            userDTO.setRole(role);
+        }
         return userDTO;
     }
 
@@ -160,13 +183,5 @@ public class UserService {
             return null;
         }
         return userOptional.get();
-    }
-
-    public void handleSetCompanyNullIfCompanyDelete(Company company) {
-        Optional<User> user = this.userRepository.findByCompany(company);
-        if (user.isPresent()) {
-            user.get().setCompany(null);
-            this.userRepository.save(user.get());
-        }
     }
 }

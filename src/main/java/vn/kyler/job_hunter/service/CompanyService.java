@@ -48,12 +48,12 @@ public class CompanyService {
         return resultPaginationDTO;
     }
 
-    public Company handleGetCompanyById(long id) throws NotFoundException {
-        Optional<Company> company = this.companyRepository.findById(id);
-        if (!company.isPresent()) {
+    public Company handleGetCompany(long id) throws NotFoundException {
+        Optional<Company> companyOptional = this.companyRepository.findById(id);
+        if (!companyOptional.isPresent()) {
             throw new NotFoundException("Company with id " + id + " not found");
         }
-        return company.get();
+        return companyOptional.get();
     }
 
     public Company handleUpdateCompany(Company company) throws NotFoundException {
@@ -65,9 +65,8 @@ public class CompanyService {
             companyToUpdate.setAddress(company.getAddress());
             companyToUpdate.setLogo(company.getLogo());
             return this.companyRepository.save(companyToUpdate);
-        } else {
-            throw new NotFoundException("Company with id " + company.getId() + " not found");
         }
+        throw new NotFoundException("Company with id " + company.getId() + " not found");
     }
 
     public void handleDeleteCompany(long id) throws NotFoundException {

@@ -1,5 +1,9 @@
 package vn.kyler.job_hunter.service;
 
+import com.turkraft.springfilter.converter.FilterSpecification;
+import com.turkraft.springfilter.converter.FilterSpecificationConverter;
+import com.turkraft.springfilter.parser.FilterParser;
+import com.turkraft.springfilter.parser.node.FilterNode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -12,6 +16,7 @@ import vn.kyler.job_hunter.domain.response.ResResumeDTO;
 import vn.kyler.job_hunter.domain.response.ResultPaginationDTO;
 import vn.kyler.job_hunter.repository.ResumeRepository;
 import vn.kyler.job_hunter.service.exception.NotFoundException;
+import vn.kyler.job_hunter.util.SecurityUtil;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,11 +27,15 @@ public class ResumeService {
     private final ResumeRepository resumeRepository;
     private final UserService userService;
     private final JobService jobService;
+    private final FilterParser filterParser;
+    private final FilterSpecificationConverter filterSpecificationConverter;
 
-    public ResumeService(ResumeRepository resumeRepository, UserService userService, JobService jobService) {
+    public ResumeService(ResumeRepository resumeRepository, UserService userService, JobService jobService, FilterParser filterParser, FilterSpecificationConverter filterSpecificationConverter) {
         this.resumeRepository = resumeRepository;
         this.userService = userService;
         this.jobService = jobService;
+        this.filterParser = filterParser;
+        this.filterSpecificationConverter = filterSpecificationConverter;
     }
 
     public Resume handleCreateResume(Resume resume) throws NotFoundException {
@@ -44,7 +53,6 @@ public class ResumeService {
     public ResultPaginationDTO handleGetAllResume(Specification<Resume> specification, Pageable pageable) {
         Page<Resume> resumePage = resumeRepository.findAll(specification, pageable);
 
-        //set job response
         List<ResResumeDTO> resResumeDTOS = resumePage.getContent().stream()
                 .map(resume -> {
                     ResResumeDTO resumeDTO = new ResResumeDTO();
@@ -151,5 +159,53 @@ public class ResumeService {
             resumeDTO.setJob(job);
         }
         return resumeDTO;
+    }
+
+    public ResultPaginationDTO handleGetResumeByUser(Pageable pageable) {
+        String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
+        FilterNode filterNode = this.filterParser.parse("email='" + email + "'");
+        FilterSpecification<Resume> filterSpecification = this.filterSpecificationConverter.convert(filterNode);
+        Page<Resume> resumePage = this.resumeRepository.findAll(filterSpecification, pageable);
+
+        List<ResResumeDTO> resResumeDTOS = resumePage.getContent().stream()
+                .map(resume -> {
+                    ResResumeDTO resumeDTO = new ResResumeDTO();
+                    resumeDTO.setId(resume.getId());
+                    resumeDTO.setEmail(resume.getEmail());
+                    resumeDTO.setUrl(resume.getUrl());
+                    resumeDTO.setStatus(resume.getStatus());
+                    resumeDTO.setCreatedAt(resume.getCreatedAt());
+                    resumeDTO.setUpdatedAt(resume.getUpdatedAt());
+                    resumeDTO.setCreatedBy(resume.getCreatedBy());
+                    resumeDTO.setUpdatedBy(resume.getUpdatedBy());
+
+                    if (resume.getUser() != null) {
+                        ResResumeDTO.User user = new ResResumeDTO.User();
+                        user.setId(resume.getUser().getId());
+                        user.setName(resume.getUser().getName());
+                        resumeDTO.setUser(user);
+                    }
+
+                    if (resume.getJob() != null) {
+                        ResResumeDTO.Job job = new ResResumeDTO.Job();
+                        job.setId(resume.getJob().getId());
+                        job.setName(resume.getJob().getName());
+                        resumeDTO.setJob(job);
+                    }
+                    return resumeDTO;
+                })
+                .collect(Collectors.toList());
+
+        ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
+        ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
+
+        meta.setPageNumber(resumePage.getNumber() + 1);
+        meta.setPageSize(resumePage.getSize());
+        meta.setTotalPages(resumePage.getTotalPages());
+        meta.setTotalElements(resumePage.getTotalElements());
+
+        resultPaginationDTO.setMeta(meta);
+        resultPaginationDTO.setResult(resResumeDTOS);
+        return resultPaginationDTO;
     }
 }

@@ -28,10 +28,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
-    implementation("com.turkraft.springfilter:jpa:3.1.7")
-    implementation("com.bucket4j:bucket4j-core:8.1.0")
-//	implementation("com.github.vladimir-bukhtoyarov:bucket4j-distributed-redis:7.6.0")//
-//    implementation("org.redisson:redisson-spring-boot-starter:3.25.2")//
+    implementation("com.turkraft.springfilter:jpa:3.1.7")//
+    implementation("com.bucket4j:bucket4j-core:8.9.0")//
+    implementation("com.bucket4j:bucket4j-redis:8.9.0")//
+    implementation("io.lettuce:lettuce-core:6.3.1.RELEASE")//
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("com.mysql:mysql-connector-j")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

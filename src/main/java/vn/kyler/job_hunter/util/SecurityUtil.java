@@ -52,22 +52,21 @@ public class SecurityUtil {
     }
 
     public String createAccessToken(String email, ResLoginDTO restLoginDTO) {
+        ResLoginDTO.UserInsideToken userInsideToken = new ResLoginDTO.UserInsideToken();
+        userInsideToken.setId(restLoginDTO.getUserLogin().getId());
+        userInsideToken.setEmail(restLoginDTO.getUserLogin().getEmail());
+        userInsideToken.setName(restLoginDTO.getUserLogin().getName());
+
         Instant now = Instant.now();
         Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
-
-        // hardcode permission
-        List<String> listAuthority = new ArrayList<String>();
-
-        listAuthority.add("ROLE_USER_CREATE");
-        listAuthority.add("ROLE_USER_UPDATE");
 
         // @formatter:off
         JwtClaimsSet claims = JwtClaimsSet.builder()
             .issuedAt(now)
             .expiresAt(validity)
             .subject(email)
-            .claim("user", restLoginDTO.getUserLogin())
-            .claim("permission", listAuthority)
+            .claim("user", userInsideToken)
+//            .claim("permission", restLoginDTO.getUserLogin().getRole())
             .build();
 
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
@@ -75,16 +74,22 @@ public class SecurityUtil {
     }
 
     public String createRefreshToken(String email, ResLoginDTO restLoginDTO) {
+        ResLoginDTO.UserInsideToken userInsideToken = new ResLoginDTO.UserInsideToken();
+        userInsideToken.setId(restLoginDTO.getUserLogin().getId());
+        userInsideToken.setEmail(restLoginDTO.getUserLogin().getEmail());
+        userInsideToken.setName(restLoginDTO.getUserLogin().getName());
+
         Instant now = Instant.now();
-        Instant validity = now.plus(this.refreshTokenExpiration, ChronoUnit.SECONDS);
+        Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
 
         // @formatter:off
         JwtClaimsSet claims = JwtClaimsSet.builder()
-            .issuedAt(now)
-            .expiresAt(validity)
-            .subject(email)
-            .claim("user", restLoginDTO.getUserLogin())
-            .build();
+                .issuedAt(now)
+                .expiresAt(validity)
+                .subject(email)
+                .claim("user", userInsideToken)
+//            .claim("permission", restLoginDTO.getUserLogin().getRole())
+                .build();
 
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
         return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();

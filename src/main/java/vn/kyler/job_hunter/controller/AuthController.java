@@ -50,14 +50,12 @@ public class AuthController {
 
         @PostMapping("/auth/login")
         public ResponseEntity<ResLoginDTO> login(@Valid @RequestBody ReqLoginDTO loginDTO) {
-
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                                 loginDTO.getUsername(), loginDTO.getPassword());
 
                 // xác thực người dùng => cần viết hàm loadUserByUsername
                 Authentication authentication = authenticationManagerBuilder.getObject()
-                                .authenticate(authenticationToken);// import
-                                                                   // org.springframework.security.core.Authentication;
+                                .authenticate(authenticationToken);// import org.springframework.security.core.Authentication;
 
                 // nạp thông tin (nếu xử lý thành công) vào SecurityContext
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -66,7 +64,7 @@ public class AuthController {
                 User user = this.userService.handleGetUserByEmail(loginDTO.getUsername());
                 if (user != null) {
                         ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(user.getId(), user.getEmail(),
-                                        user.getName());
+                                        user.getName(),user.getRole());
                         restLoginDTO.setUserLogin(userLogin);
                 }
 
@@ -101,7 +99,7 @@ public class AuthController {
                 if (user != null) {
                         userLogin = new ResLoginDTO.UserLogin(user.getId(),
                                         user.getEmail(),
-                                        user.getName());
+                                        user.getName(),user.getRole());
                         userGetAccount.setUser(userLogin);
                 }
                 return ResponseEntity.status(HttpStatus.OK).body(userGetAccount);
@@ -130,7 +128,7 @@ public class AuthController {
                 // Check if refresh token and user email match
                 ResLoginDTO restLoginDTO = new ResLoginDTO();
                 ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(user.getId(), user.getEmail(),
-                                user.getName());
+                        user.getName(),user.getRole());
                 restLoginDTO.setUserLogin(userLogin);
 
                 // Create access token

@@ -22,6 +22,7 @@ import vn.kyler.job_hunter.domain.response.ResultPaginationDTO;
 import vn.kyler.job_hunter.service.UserService;
 import vn.kyler.job_hunter.service.exception.ExistsException;
 import vn.kyler.job_hunter.service.exception.NotFoundException;
+import vn.kyler.job_hunter.util.SecurityUtil;
 import vn.kyler.job_hunter.util.annotation.ApiMessage;
 
 import org.springframework.web.bind.annotation.PutMapping;
@@ -60,8 +61,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleConvertToUserDTO(user));
     }
 
+
     @GetMapping("/users")
-    @ApiMessage("Fetch all users")
     public ResponseEntity<ResultPaginationDTO> getAllUsers(
             Pageable pageable,
             @Filter Specification<User> specification) {

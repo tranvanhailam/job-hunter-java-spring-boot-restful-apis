@@ -31,7 +31,7 @@ public class JobService {
 
     public Job handleCreateJob(Job job) throws NotFoundException {
         if (job.getCompany() != null) {
-            Company company = this.companyService.handleGetCompanyById(job.getCompany().getId());
+            Company company = this.companyService.handleGetCompany(job.getCompany().getId());
             job.setCompany(company);
         }
         if (job.getSkills() != null) {
@@ -47,7 +47,7 @@ public class JobService {
                             .collect(Collectors.toList())
             );
         }
-        return jobRepository.save(job);
+        return this.jobRepository.save(job);
     }
 
     public ResultPaginationDTO handleGetAllJob(Specification<Job> specification, Pageable pageable) {
@@ -67,6 +67,10 @@ public class JobService {
                     jobDTO.setStartDate(job.getStartDate());
                     jobDTO.setEndDate(job.getEndDate());
                     jobDTO.setActive(job.isActive());
+                    jobDTO.setCreatedAt(job.getCreatedAt());
+                    jobDTO.setUpdatedAt(job.getUpdatedAt());
+                    jobDTO.setCreatedBy(job.getCreatedBy());
+                    jobDTO.setUpdatedBy(job.getUpdatedBy());
 
                     //set company
                     if (job.getCompany() != null) {
@@ -130,7 +134,7 @@ public class JobService {
         jobToUpdate.setActive(job.isActive());
 
         if (job.getCompany() != null) {
-            Company company = this.companyService.handleGetCompanyById(job.getCompany().getId());
+            Company company = this.companyService.handleGetCompany(job.getCompany().getId());
             jobToUpdate.setCompany(company);
         } else jobToUpdate.setCompany(null);
 

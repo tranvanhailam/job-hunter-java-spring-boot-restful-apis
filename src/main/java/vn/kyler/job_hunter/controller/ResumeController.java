@@ -2,6 +2,7 @@ package vn.kyler.job_hunter.controller;
 
 import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
+import org.hibernate.query.ReturnableType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -53,5 +54,11 @@ public class ResumeController {
         restResponse.setStatusCode(HttpStatus.OK.value());
         restResponse.setMessage("Delete resume successfully!");
         return ResponseEntity.status(HttpStatus.OK).body(restResponse);
+    }
+
+    @GetMapping("/resumes/by-user")
+    public ResponseEntity<ResultPaginationDTO> getResumesByUser(Pageable pageable) {
+        ResultPaginationDTO resultPaginationDTO = this.resumeService.handleGetResumeByUser(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(resultPaginationDTO);
     }
 }

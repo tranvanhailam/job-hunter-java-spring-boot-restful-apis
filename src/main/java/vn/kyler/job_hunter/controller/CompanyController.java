@@ -2,9 +2,7 @@ package vn.kyler.job_hunter.controller;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
-import io.github.bucket4j.Bucket4j;
 import io.github.bucket4j.Refill;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.turkraft.springfilter.boot.Filter;
@@ -65,7 +63,7 @@ public class CompanyController {
 
     @GetMapping("/companies/{id}")
     public ResponseEntity<Company> getCompany(@PathVariable("id") long id) throws NotFoundException {
-        Company company = this.companyService.handleGetCompanyById(id);
+        Company company = this.companyService.handleGetCompany(id);
         return ResponseEntity.status(HttpStatus.OK).body(company);
     }
 
