@@ -80,7 +80,9 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/login", "/auth/refresh","/storage/**").permitAll()
+                        .requestMatchers("/auth/login", "/auth/refresh","/auth/register",
+                                "/storage/**",
+                                "/companies","/jobs","/skills").permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer
                         .withDefaults())

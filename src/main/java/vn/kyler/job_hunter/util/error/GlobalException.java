@@ -20,6 +20,16 @@ import vn.kyler.job_hunter.service.exception.*;
 @RestControllerAdvice
 public class GlobalException {
 
+    @ExceptionHandler(value = AccessDenyException.class)
+    public ResponseEntity<RestResponse<Object>> handleAccessDenyException(
+            AccessDenyException e) {
+        RestResponse<Object> restResponse = new RestResponse<>();
+        restResponse.setStatusCode(HttpStatus.FORBIDDEN.value());
+        restResponse.setMessage(e.getMessage());
+        restResponse.setError("AccessDenyException");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(restResponse);
+    }
+
     @ExceptionHandler(value = NoRefreshTokenInCookieException.class)
     public ResponseEntity<RestResponse<Object>> handleNoRefreshTokenInCookieException(
             NoRefreshTokenInCookieException e) {
