@@ -83,6 +83,13 @@ public class DatabaseInitializer implements CommandLineRunner {
             arr.add(new Permission("Get a subscriber by id", "/subscribers/{id}", "GET", "SUBSCRIBERS"));
             arr.add(new Permission("Get subscribers with pagination", "/subscribers", "GET", "SUBSCRIBERS"));
 
+            arr.add(new Permission("Create a skill", "/skills", "POST", "SKILLS"));
+            arr.add(new Permission("Update a skill", "/skills", "PUT", "SKILLS"));
+            arr.add(new Permission("Delete a skill", "/skills/{id}", "DELETE", "SKILLS"));
+            arr.add(new Permission("Get a skill by id", "/skills/{id}", "GET", "SKILLS"));
+            arr.add(new Permission("Get skill with pagination", "/skills", "GET", "SKILLS"));
+
+
             arr.add(new Permission("Download a file", "/files", "POST", "FILES"));
             arr.add(new Permission("Upload a file", "/files", "GET", "FILES"));
 

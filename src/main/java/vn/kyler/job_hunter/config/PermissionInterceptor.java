@@ -41,8 +41,6 @@ public class PermissionInterceptor implements HandlerInterceptor {
         if (role != null) {
             List<Permission> permissions = role.getPermissions();
             boolean allowAccess = permissions.stream().anyMatch(permission -> {
-                String p1 = permission.getApiPath();
-                String p2 = permission.getMethod();
                 return permission.getApiPath().equals(path)
                         && permission.getMethod().equals(httpMethod);
             });

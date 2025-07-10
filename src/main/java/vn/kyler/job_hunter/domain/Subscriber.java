@@ -1,31 +1,29 @@
 package vn.kyler.job_hunter.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import vn.kyler.job_hunter.util.SecurityUtil;
 
 import java.time.Instant;
 import java.util.List;
 
 @Entity
-@Table(name = "skills")
+@Table(name = "subscribers")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Skill {
+public class Subscriber {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(unique = true, nullable = false)
     private String name;
+    private String email;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
     private Instant createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
@@ -33,15 +31,10 @@ public class Skill {
     private String createdBy;
     private String updatedBy;
 
-    @ManyToMany(mappedBy = "skills", fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<Job> jobs;
-
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "skills")
-    @JsonIgnore
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<Subscriber> subscribers;
-
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"subscribers"})
+    @JoinTable(name = "subscriber_skill", joinColumns = @JoinColumn(name = "subscriber_id"), inverseJoinColumns = @JoinColumn(name = "skill_id"))
+    private List<Skill> skills;
 
     @PrePersist
     public void handleBeforeCreate() {
@@ -54,5 +47,4 @@ public class Skill {
         this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
         this.updatedAt = Instant.now();
     }
-
 }
