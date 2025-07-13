@@ -42,7 +42,7 @@ public class RoleController {
 
     @GetMapping("/roles")
     public ResponseEntity<ResultPaginationDTO> getAllRole(Pageable pageable, @Filter Specification<Role> specification) throws NotFoundException {
-        ResultPaginationDTO resultPaginationDTO = this.roleService.handleGetAllJob(specification, pageable);
+        ResultPaginationDTO resultPaginationDTO = this.roleService.handleGetAllRole(specification, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(resultPaginationDTO);
     }
 

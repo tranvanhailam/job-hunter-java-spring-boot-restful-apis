@@ -82,7 +82,7 @@ public class RoleService {
         return this.roleRepository.save(roleToUpdate);
     }
 
-    public ResultPaginationDTO handleGetAllJob(Specification<Role> specification, Pageable pageable) {
+    public ResultPaginationDTO handleGetAllRole(Specification<Role> specification, Pageable pageable) {
         Page<Role> jobPage = this.roleRepository.findAll(specification, pageable);
 
         List<ResRoleDTO> roleDTOS = jobPage.getContent().stream().map(role -> {

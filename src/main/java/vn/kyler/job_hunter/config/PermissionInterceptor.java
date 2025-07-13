@@ -2,6 +2,8 @@ package vn.kyler.job_hunter.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
 public class PermissionInterceptor implements HandlerInterceptor {
     @Autowired
     private UserService userService;
+    Logger logger = LoggerFactory.getLogger(PermissionInterceptor.class);
+
 
     @Override
     @Transactional
@@ -27,10 +31,6 @@ public class PermissionInterceptor implements HandlerInterceptor {
         String path = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
         String requestURI = request.getRequestURI();
         String httpMethod = request.getMethod();
-        System.out.println(">>> RUN preHandle");
-        System.out.println(">>> path= " + path);
-        System.out.println(">>> httpMethod= " + httpMethod);
-        System.out.println(">>> requestURI= " + requestURI);
         String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get()
                 : "";
         if (email == null && email.isEmpty()) {
@@ -44,7 +44,7 @@ public class PermissionInterceptor implements HandlerInterceptor {
                 return permission.getApiPath().equals(path)
                         && permission.getMethod().equals(httpMethod);
             });
-            System.out.println(">>> allowAccess= " + allowAccess);
+            logger.info("An INFO Message, allow access: {}", allowAccess);
             if (!allowAccess) {
                 throw new AccessDenyException("No access to this endpoint");
             }
