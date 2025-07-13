@@ -1,8 +1,10 @@
 package vn.kyler.job_hunter.controller;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,6 +45,8 @@ public class EmailController {
     }
 
     @PostMapping("/email")
+    @Scheduled(cron = "0 0 8 ? * SAT")
+    @Transactional
     public ResponseEntity<?> sendEmail() {
         List<Subscriber> subscribers = this.subscriberRepository.findAll();
         if (subscribers != null && subscribers.size() > 0) {

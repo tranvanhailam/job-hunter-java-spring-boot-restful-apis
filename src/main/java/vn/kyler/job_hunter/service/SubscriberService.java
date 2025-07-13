@@ -1,5 +1,6 @@
 package vn.kyler.job_hunter.service;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import vn.kyler.job_hunter.domain.Subscriber;
 import vn.kyler.job_hunter.domain.response.ResJobDTO;
@@ -8,6 +9,7 @@ import vn.kyler.job_hunter.repository.SubscriberRepository;
 import vn.kyler.job_hunter.service.exception.ExistsException;
 import vn.kyler.job_hunter.service.exception.NotFoundException;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -20,6 +22,7 @@ public class SubscriberService {
         this.subscriberRepository = subscriberRepository;
         this.skillService = skillService;
     }
+
 
     public Subscriber handleCreateSubscriber(Subscriber subscriber) throws ExistsException {
         boolean existsEmail = this.subscriberRepository.existsByEmail(subscriber.getEmail());
@@ -97,4 +100,6 @@ public class SubscriberService {
         }
         return subscriberDTO;
     }
+
+
 }
