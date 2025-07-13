@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 //import org.springframework.context.ApplicationContext;
 
 @SpringBootApplication
-@EnableAsync
+//@EnableAsync
 @EnableScheduling
 public class JobHunterApplication {
 

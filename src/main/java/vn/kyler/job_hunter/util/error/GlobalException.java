@@ -20,6 +20,16 @@ import vn.kyler.job_hunter.service.exception.*;
 @RestControllerAdvice
 public class GlobalException {
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<RestResponse<Object>> handleAllException(Exception ex) {
+        RestResponse<Object> res = new RestResponse<>();
+        res.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        res.setMessage(ex.getMessage());
+        res.setError("Internal Server Error");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
+    }
+
+
     @ExceptionHandler(value = AccessDenyException.class)
     public ResponseEntity<RestResponse<Object>> handleAccessDenyException(
             AccessDenyException e) {
