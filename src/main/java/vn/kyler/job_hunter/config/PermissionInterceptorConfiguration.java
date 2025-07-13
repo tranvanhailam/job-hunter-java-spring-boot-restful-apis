@@ -17,7 +17,7 @@ public class PermissionInterceptorConfiguration implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         String[] whiteList = {
                 "/", "/auth/**", "/storage/**",
-                "/companies", "/jobs", "/skills", "/files"
+                "/companies", "/jobs", "/skills", "/files","/email/**"
         };
         registry.addInterceptor(getPermissionInterceptor())
                 .excludePathPatterns(whiteList);

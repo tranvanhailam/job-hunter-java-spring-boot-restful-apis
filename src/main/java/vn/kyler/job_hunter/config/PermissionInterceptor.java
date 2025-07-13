@@ -51,5 +51,4 @@ public class PermissionInterceptor implements HandlerInterceptor {
         } else throw new AccessDenyException("No access to this endpoint");
         return true;
     }
-
 }

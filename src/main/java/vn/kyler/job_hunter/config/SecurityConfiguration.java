@@ -82,7 +82,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/login", "/auth/refresh","/auth/register",
                                 "/storage/**",
-                                "/companies","/jobs","/skills").permitAll()
+                                "/companies","/jobs","/skills","/email/**").permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer
                         .withDefaults())

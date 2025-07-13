@@ -44,11 +44,11 @@ public class RateLimitConfig {
 
     @Bean
     public Supplier<BucketConfiguration> bucketConfiguration() { //(3)
-        Refill refill = Refill.intervally(60, Duration.ofMinutes(1));
+        Refill refill = Refill.intervally(600000000, Duration.ofMinutes(1));
 //        Bandwidth limit = Bandwidth.classic(10, refill);
 //        Bucket bucket = Bucket.builder().addLimit(limit).build();
         return () -> BucketConfiguration.builder()
-                .addLimit(Bandwidth.classic(60, refill))
+                .addLimit(Bandwidth.classic(600000000, refill))
                 .build();
     }
 }
